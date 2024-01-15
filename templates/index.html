@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Architect</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include Tailwind CSS from CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <div id="chatbox" class="h-96 w-96 overflow-auto p-4 bg-gray-50 rounded">
+            <!-- The AI's responses and the user's questions will be added here -->
+        </div>
+        <div class="flex mt-4">
+            <input type="text" id="inputbox" placeholder="Type your question..." class="border p-2 rounded-l-lg flex-grow">
+            <button id="sendbutton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-lg">
+                Send
+            </button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#sendbutton').click(function() {
+                var question = $('#inputbox').val();
+                $('#chatbox').append('<div class="p-2 my-2 bg-blue-200 rounded">' + 'You: ' + question + '</div>');
+                $('#inputbox').val('');
+                $.ajax({
+                    url: '/ask',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ 'question': question }),
+                    success: function(response) {
+                        $('#chatbox').append('<div class="p-2 my-2 bg-green-200 rounded">' + 'AI: ' + response['answer'] + '</div>');
+                        // Scroll to the bottom of the chatbox
+                        $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
